@@ -1,5 +1,3 @@
-"""Таблица рекордов: лучшее время для каждого уровня сложности."""
-
 from __future__ import annotations
 
 import json
@@ -9,24 +7,15 @@ from typing import Dict, Optional
 
 
 class RecordsTable:
-    """Лучшие результаты, сохраняемые в JSON-файл.
-
-    Формат файла::
-
-        {"beginner": {"time": 42, "date": "22.10.2026"}, ...}
-    """
 
     def __init__(self, path: Path) -> None:
-        """Загрузить таблицу из файла (если его нет — таблица пуста)."""
         self.path = Path(path)
         self._records: Dict[str, dict] = self._load()
 
     def best(self, key: str) -> Optional[dict]:
-        """Лучший результат уровня key или None."""
         return self._records.get(key)
 
     def submit(self, key: str, seconds: int) -> bool:
-        """Учесть результат. Возвращает True, если это новый рекорд."""
         current = self.best(key)
         if current is not None and current["time"] <= seconds:
             return False
@@ -36,7 +25,6 @@ class RecordsTable:
         return True
 
     def clear(self) -> None:
-        """Удалить все рекорды."""
         self._records = {}
         self._save()
 

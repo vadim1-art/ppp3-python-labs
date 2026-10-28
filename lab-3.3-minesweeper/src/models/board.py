@@ -1,5 +1,3 @@
-"""Игровое поле «Сапёра»: расстановка мин и открытие клеток."""
-
 from __future__ import annotations
 
 import random
@@ -15,7 +13,6 @@ class Board:
     """Прямоугольное поле из клеток rows × cols."""
 
     def __init__(self, rows: int, cols: int) -> None:
-        """Создать пустое поле без мин."""
         if rows < 1 or cols < 1:
             raise ValueError("Размер поля должен быть положительным")
         self.rows = rows
@@ -23,22 +20,20 @@ class Board:
         self._grid = [[Cell(r, c) for c in range(cols)] for r in range(rows)]
 
     def __iter__(self) -> Iterator[Cell]:
-        """Перебрать все клетки поля построчно."""
         for row in self._grid:
             yield from row
 
     def cell(self, row: int, col: int) -> Cell:
-        """Вернуть клетку по координатам."""
+        #Вернуть клетку по координатам
         if not self.in_bounds(row, col):
             raise IndexError(f"Клетка ({row}, {col}) вне поля")
         return self._grid[row][col]
 
     def in_bounds(self, row: int, col: int) -> bool:
-        """Проверить, что координаты лежат внутри поля."""
         return 0 <= row < self.rows and 0 <= col < self.cols
 
     def neighbors(self, row: int, col: int) -> Iterator[Cell]:
-        """Перебрать до восьми соседей клетки (по сторонам и диагоналям)."""
+        #Перебрать до восьми соседей клетки
         for dr in (-1, 0, 1):
             for dc in (-1, 0, 1):
                 if (dr or dc) and self.in_bounds(row + dr, col + dc):
@@ -46,23 +41,20 @@ class Board:
 
     @property
     def mine_count(self) -> int:
-        """Сколько мин на поле."""
         return sum(cell.is_mine for cell in self)
 
     @property
     def flag_count(self) -> int:
-        """Сколько флажков поставил игрок."""
         return sum(cell.is_flagged for cell in self)
 
     @property
     def closed_safe_count(self) -> int:
-        """Сколько безопасных клеток ещё не открыто."""
         return sum(not cell.is_mine and not cell.is_open for cell in self)
 
     def place_random_mines(self, count: int, safe: Optional[Position] = None,
                            rng: Optional[random.Random] = None) -> None:
-        """Случайно расставить count мин.
-
+        """
+        Случайно расставить count мин.
         Клетка safe (первый ход игрока) и, если хватает места, все её
         соседи остаются без мин — так первый ход всегда открывает
         область, а не одну цифру.
@@ -84,7 +76,6 @@ class Board:
         self.set_mines(rng.sample(candidates, count))
 
     def set_mines(self, positions: Iterable[Position]) -> None:
-        """Расставить мины в заданные клетки и пересчитать цифры."""
         for cell in self:
             cell.is_mine = False
         for row, col in positions:
@@ -94,8 +85,8 @@ class Board:
                                 for n in self.neighbors(cell.row, cell.col))
 
     def open_area(self, row: int, col: int) -> List[Cell]:
-        """Открыть клетку, а если рядом нет мин — и всю пустую область.
-
+        """
+        Открыть клетку, а если рядом нет мин — и всю пустую область.
         Используется обход в ширину (BFS): от клетки с нулём волна
         расходится к соседям и останавливается на клетках с цифрами.
         Флажки не открываются. Возвращает открытые клетки в порядке

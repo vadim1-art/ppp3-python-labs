@@ -1,5 +1,3 @@
-"""Уровни сложности игры."""
-
 from dataclasses import dataclass
 
 MIN_SIDE = 5
@@ -30,8 +28,8 @@ PRESETS = (BEGINNER, INTERMEDIATE, EXPERT)
 
 
 def max_mines(rows: int, cols: int) -> int:
-    """Наибольшее допустимое число мин для поля rows × cols.
-
+    """
+    Наибольшее допустимое число мин для поля rows × cols.
     Как в классическом «Сапёре»: (rows - 1) * (cols - 1), чтобы на поле
     всегда оставалось место для безопасного первого хода.
     """
@@ -39,7 +37,6 @@ def max_mines(rows: int, cols: int) -> int:
 
 
 def custom(rows: int, cols: int, mines: int) -> Difficulty:
-    """Создать особый уровень, приведя параметры к допустимым границам."""
     rows = max(MIN_SIDE, min(MAX_ROWS, int(rows)))
     cols = max(MIN_SIDE, min(MAX_COLS, int(cols)))
     mines = max(1, min(max_mines(rows, cols), int(mines)))
