@@ -100,8 +100,8 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/vadim1-art/ppp-python-labs.git
-cd ppp-python-labs
+git clone https://github.com/vadim1-art/ppp3-python-labs.git
+cd ppp3-python-labs
 ```
 
 ### 2. Активация виртуального окружения

@@ -36,8 +36,8 @@
 ## Быстрый старт
 
 ```bash
-git clone https://github.com/vadim1-art/ppp-python-labs.git
-cd ppp-python-labs
+git clone https://github.com/vadim1-art/ppp3-python-labs.git
+cd ppp3-python-labs
 
 # Windows
 venv\Scripts\activate
@@ -66,7 +66,7 @@ python -m venv venv
 ## Структура репозитория
 
 ```
-ppp-python-labs/
+ppp3-python-labs/
 ├── .gitignore               # исключает __pycache__ и файлы IDE (но не venv/)
 ├── README.md                # этот файл
 ├── venv/                    # виртуальное окружение (общее для работ)
