@@ -1,5 +1,3 @@
-"""Отрисовка фрактального дерева на холсте tkinter."""
-
 from __future__ import annotations
 
 import colorsys
@@ -13,18 +11,15 @@ RGB = Tuple[int, int, int]
 
 
 def _lerp_color(start: RGB, end: RGB, t: float) -> str:
-    """Линейно смешать два цвета и вернуть результат в формате #rrggbb."""
     r, g, b = (round(a + (b - a) * t) for a, b in zip(start, end))
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def _gradient(start: RGB, end: RGB) -> Callable[[float], str]:
-    """Палитра-градиент: цвет плавно меняется от ствола к листьям."""
     return lambda t: _lerp_color(start, end, t)
 
 
 def _rainbow(t: float) -> str:
-    """Палитра-радуга: тон (hue) зависит от уровня ветви."""
     r, g, b = colorsys.hsv_to_rgb(0.02 + 0.75 * t, 0.65, 1.0)
     return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
 
@@ -41,15 +36,11 @@ PALETTES: Dict[str, Callable[[float], str]] = {
 
 
 class TreeRenderer:
-    """Рисует список отрезков на холсте, вписывая дерево в окно.
-
-    Чтобы анимация была плавной, линии не пересоздаются на каждом кадре:
-    если число отрезков и стиль не изменились, у уже существующих линий
-    обновляются только координаты.
+    """
+    Рисует список отрезков на холсте, вписывая дерево в окно.
     """
 
     def __init__(self, canvas: tk.Canvas, palette: str) -> None:
-        """Привязать отрисовщик к холсту и выбрать палитру."""
         self.canvas = canvas
         self.palette = palette
         self._items: List[int] = []
@@ -57,7 +48,6 @@ class TreeRenderer:
 
     @property
     def palette(self) -> str:
-        """Название текущей палитры (ключ словаря PALETTES)."""
         return self._palette
 
     @palette.setter
@@ -67,7 +57,7 @@ class TreeRenderer:
         self._palette = name
 
     def render(self, segments: Sequence[Segment], depth: int) -> None:
-        """Нарисовать отрезки дерева глубины depth."""
+        #Нарисовать отрезки дерева глубины depth
         width = max(self.canvas.winfo_width(), 1)
         height = max(self.canvas.winfo_height(), 1)
         scale, base_x, base_y = self._fit(segments, width, height)
@@ -88,7 +78,6 @@ class TreeRenderer:
                 self.canvas.coords(item, *xy)
 
     def clear(self) -> None:
-        """Удалить с холста все линии дерева."""
         for item in self._items:
             self.canvas.delete(item)
         self._items = []
@@ -96,7 +85,7 @@ class TreeRenderer:
     def _recreate(self, segments: Sequence[Segment],
                   coords: Sequence[Tuple[float, float, float, float]],
                   depth: int) -> None:
-        """Пересоздать все линии (меняется число ветвей или палитра)."""
+        #Пересоздать все линии
         self.clear()
         color_of = PALETTES[self.palette]
         # Цвет и толщина зависят только от уровня — считаем их один раз.
@@ -104,13 +93,12 @@ class TreeRenderer:
                   for level in range(depth)]
         for segment, xy in zip(segments, coords):
             color, width = styles[segment.level]
-            self._items.append(self.canvas.create_line(
-                *xy, fill=color, width=width, capstyle=tk.ROUND))
+            self._items.append(self.canvas.create_line(*xy, fill=color, width=width, capstyle=tk.ROUND))
 
     @staticmethod
     def _style(level: int, depth: int,
                color_of: Callable[[float], str]) -> Tuple[str, float]:
-        """Цвет и толщина линии для ветви уровня level."""
+        #Цвет и толщина линии для ветви уровня level
         t = level / (depth - 1) if depth > 1 else 0.0
         width = 1.0 + (MAX_LINE_WIDTH - 1.0) * (1.0 - t) ** 2
         return color_of(t), width
@@ -118,12 +106,7 @@ class TreeRenderer:
     @staticmethod
     def _fit(segments: Sequence[Segment], width: int,
              height: int) -> Tuple[float, float, float]:
-        """Подобрать масштаб и положение основания ствола на холсте.
 
-        Базовый масштаб задаёт длину ствола (TRUNK_FRACTION от высоты
-        окна). Если крона не помещается в окно, масштаб уменьшается.
-        Возвращает (масштаб, x основания, y основания) в пикселях.
-        """
         min_x, min_y, max_x, max_y = bounding_box(segments)
         scale = TRUNK_FRACTION * height
 

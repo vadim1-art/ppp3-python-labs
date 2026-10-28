@@ -1,8 +1,8 @@
 """Модель фрактального дерева: рекурсивное построение ветвей.
 
 Модель ничего не знает о tkinter и работает в «мировых» координатах:
-основание ствола находится в точке (0, 0), ось Y направлена вверх,
-длина ствола равна 1. Перевод в пиксели холста выполняет отрисовщик.
+основание ствола находится в точке (0, 0), ось Y направлена вверх
+длина ствола равна 1. Перевод в пиксели холста выполняет отрисовщик
 """
 
 from __future__ import annotations
@@ -16,10 +16,10 @@ TRUNK_HEADING = 90.0  # ствол растёт вертикально ввер�
 
 @dataclass(frozen=True)
 class Segment:
-    """Одна ветвь дерева — отрезок от (x1, y1) до (x2, y2).
-
+    """
+    Одна ветвь дерева — отрезок от (x1, y1) до (x2, y2)
     Атрибут level — номер итерации: 0 у ствола, 1 у первых двух ветвей
-    и так далее.
+    и так далее
     """
 
     x1: float
@@ -30,16 +30,15 @@ class Segment:
 
     @property
     def length(self) -> float:
-        """Длина отрезка."""
+        #Длина отрезка
         return math.hypot(self.x2 - self.x1, self.y2 - self.y1)
 
     @property
     def heading(self) -> float:
-        """Направление отрезка в градусах (0° — вправо, 90° — вверх)."""
         return math.degrees(math.atan2(self.y2 - self.y1, self.x2 - self.x1))
 
     def partial(self, fraction: float) -> "Segment":
-        """Вернуть начальную часть отрезка длиной fraction от полной."""
+        #вернуть начальную часть отрезка длиной fraction от полной
         return Segment(
             self.x1,
             self.y1,
@@ -50,22 +49,20 @@ class Segment:
 
 
 class FractalTree:
-    """Фрактальное дерево с настраиваемым углом, коэффициентом и глубиной.
-
+    """
+    Фрактальное дерево с настраиваемым углом, коэффициентом и глубиной.
     Алгоритм: рисуется вертикальный ствол; из его конца выходят две
     ветви, повёрнутые на +angle и -angle и укороченные в ratio раз;
     из конца каждой ветви снова выходят две ветви, и так depth раз.
     """
 
     def __init__(self, angle: float, ratio: float, depth: int) -> None:
-        """Создать дерево с заданными параметрами."""
         self.angle = angle
         self.ratio = ratio
         self.depth = depth
 
     @property
     def angle(self) -> float:
-        """Угол между ветвью и её продолжением, градусы (0..180)."""
         return self._angle
 
     @angle.setter
@@ -76,7 +73,7 @@ class FractalTree:
 
     @property
     def ratio(self) -> float:
-        """Во сколько раз дочерняя ветвь короче родительской (0..1)."""
+        #Во сколько раз дочерняя ветвь короче родительской
         return self._ratio
 
     @ratio.setter
@@ -87,7 +84,7 @@ class FractalTree:
 
     @property
     def depth(self) -> int:
-        """Число итераций (уровней) дерева, не меньше 1."""
+        #число итераций дерева, не меньше 1
         return self._depth
 
     @depth.setter
@@ -98,12 +95,12 @@ class FractalTree:
 
     @property
     def segment_count(self) -> int:
-        """Число ветвей полного дерева: 1 + 2 + 4 + ... = 2^depth - 1."""
+        #Число ветвей полного дерева: 1 + 2 + 4 + ... = 2^depth - 1
         return 2 ** self.depth - 1
 
     def build(self) -> List[Segment]:
-        """Построить все ветви дерева.
-
+        """
+        Построить все ветви дерева.
         Ветви идут в порядке обхода в глубину (родитель раньше потомков),
         поэтому при одинаковой глубине порядок отрезков не меняется —
         это позволяет отрисовщику просто сдвигать уже нарисованные линии.
@@ -114,7 +111,7 @@ class FractalTree:
 
     def _grow(self, x: float, y: float, heading: float, length: float,
               level: int, out: List[Segment]) -> None:
-        """Рекурсивно добавить ветвь и всех её потомков в список out."""
+        #Рекурсивно добавить ветвь и всех её потомков в список out
         if level >= self.depth:  # условие остановки рекурсии
             return
         # Конец ветви: смещение на length в направлении heading.
@@ -129,8 +126,8 @@ class FractalTree:
 
 
 def grow_stage(segments: Iterable[Segment], progress: float) -> List[Segment]:
-    """Вернуть «недорисованное» дерево для анимации роста.
-
+    """
+    Вернуть «недорисованное» дерево для анимации роста.
     progress — сколько уровней уже выросло: при progress = 2.5 ствол
     и первые ветви нарисованы полностью, а ветви уровня 2 — наполовину.
     Ветви, которые ещё не начали расти, в результат не попадают.
@@ -147,8 +144,8 @@ def grow_stage(segments: Iterable[Segment], progress: float) -> List[Segment]:
 
 def bounding_box(segments: Iterable[Segment]
                  ) -> Tuple[float, float, float, float]:
-    """Вернуть границы дерева (min_x, min_y, max_x, max_y).
-
+    """
+    Вернуть границы дерева (min_x, min_y, max_x, max_y).
     Для пустого списка возвращается вырожденный прямоугольник в нуле.
     """
     xs: List[float] = []

@@ -1,5 +1,3 @@
-"""Панель управления: слайдеры параметров, выбор палитры и кнопки."""
-
 from __future__ import annotations
 
 import tkinter as tk
@@ -18,7 +16,6 @@ SLIDER_STYLE = "Tree.Horizontal.TScale"
 
 
 def _setup_styles(master: tk.Misc) -> None:
-    """Настроить внешний вид ttk-слайдеров под тёмную тему."""
     style = ttk.Style(master)
     # Тема «clam» позволяет менять цвета ползунка и жёлоба на всех ОС.
     style.theme_use("clam")
@@ -29,17 +26,13 @@ def _setup_styles(master: tk.Misc) -> None:
 
 
 class Slider(tk.Frame):
-    """Слайдер с подписью и текущим значением.
-
-    Значение округляется до шага step, а функция on_change вызывается
-    только тогда, когда округлённое значение действительно изменилось.
-    Программная установка через ``set`` обработчик не вызывает.
+    """
+    Слайдер с подписью и текущим значением.
     """
 
     def __init__(self, master: tk.Misc, title: str,
                  bounds: Tuple[float, float], step: float, fmt: str,
                  on_change: Callable[[float], None]) -> None:
-        """Создать подпись, поле значения и сам слайдер."""
         super().__init__(master, bg=PANEL_COLOR)
         self._step = step
         self._fmt = fmt
@@ -60,7 +53,6 @@ class Slider(tk.Frame):
         self.columnconfigure(0, weight=1)
 
     def set(self, value: float) -> None:
-        """Установить значение, не вызывая обработчик."""
         self._value = self._round(value)
         self.scale.configure(command="")
         self.scale.set(value)
@@ -79,8 +71,8 @@ class Slider(tk.Frame):
 
 
 class ControlPanel(tk.Frame):
-    """Нижняя панель приложения.
-
+    """
+    Нижняя панель приложения.
     Панель не меняет модель напрямую: о действиях пользователя она
     сообщает через функции обратного вызова, переданные в конструктор.
     """
@@ -95,7 +87,6 @@ class ControlPanel(tk.Frame):
                  on_regrow: Callable[[], None],
                  on_reset: Callable[[], None],
                  palettes: Iterable[str]) -> None:
-        """Создать слайдеры и кнопки и связать их с обработчиками."""
         super().__init__(master, bg=PANEL_COLOR, padx=12, pady=10)
         _setup_styles(master)
 
@@ -149,21 +140,18 @@ class ControlPanel(tk.Frame):
 
     def set_values(self, angle: float, ratio: float, depth: int,
                    palette: str) -> None:
-        """Показать на слайдерах текущие значения параметров."""
         self.angle_slider.set(angle)
         self.ratio_slider.set(ratio)
         self.depth_slider.set(depth)
         self.palette_var.set(palette)
 
     def set_sweeping(self, sweeping: bool) -> None:
-        """Обновить подпись кнопки анимации угла."""
         self.sweep_button.configure(
             text="❚❚  Пауза" if sweeping else "▶  Анимация угла")
 
     @staticmethod
     def _make_button(master: tk.Misc, text: str,
                      command: Callable[[], None]) -> tk.Button:
-        """Создать плоскую кнопку в стиле приложения."""
         return tk.Button(
             master, text=text, command=command, bg=TROUGH_COLOR,
             fg=TEXT_COLOR, activebackground=ACCENT_COLOR,

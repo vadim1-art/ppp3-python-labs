@@ -1,5 +1,3 @@
-"""Тесты математической модели фрактального дерева."""
-
 import math
 import unittest
 
@@ -8,7 +6,6 @@ from src.models.tree_model import (FractalTree, Segment, bounding_box,
 
 
 class FractalTreeTest(unittest.TestCase):
-    """Проверка рекурсивного построения ветвей."""
 
     def test_segment_count_is_power_of_two_minus_one(self):
         for depth in range(1, 12):
